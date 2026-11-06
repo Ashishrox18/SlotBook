@@ -39,8 +39,12 @@ interface Props {
 }
 
 function detectTz(): string {
-  const t = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  return t && t.length > 0 ? t : "UTC";
+  try {
+    const t = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    return t && t.length > 0 ? t : "UTC";
+  } catch {
+    return "UTC";
+  }
 }
 
 export default function BookingFlow(props: Props) {
@@ -101,16 +105,21 @@ export default function BookingFlow(props: Props) {
     }
     const tick = () => {
       const ms = new Date(hold.hold_expires_at).getTime() - Date.now();
-      const s = Math.floor(ms / 1000);
-      setRemaining(Math.max(0, s));
-      if (ms <= 0) {
+      const s = Math.max(0, Math.floor(ms / 1000));
+      setRemaining(s);
+      if (ms <= 0 && phase === "holding") {
         setPhase("expired");
-        if (timerRef.current) clearInterval(timerRef.current);
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
       }
     };
-    tick();
+    // Delay first tick slightly to avoid React strict mode double-invoke issues.
+    const initial = setTimeout(tick, 50);
     timerRef.current = setInterval(tick, 1000);
     return () => {
+      clearTimeout(initial);
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [phase, hold]);
@@ -137,7 +146,8 @@ export default function BookingFlow(props: Props) {
       });
       const data = await res.json();
       if (res.status === 201) {
-        setHold({ id: data.id, hold_expires_at: data.hold_expires_at });
+        const holdExpiresAt = data.hold_expires_at ?? new Date(Date.now() + 5 * 60_000).toISOString();
+        setHold({ id: data.id, hold_expires_at: holdExpiresAt });
         setSelectedStartsAt(slot.starts_at);
         setPhase("holding");
       } else if (res.status === 409 && data?.code === "capacity_full") {
@@ -234,7 +244,13 @@ export default function BookingFlow(props: Props) {
               {grouped.map(([date, daySlots]) => (
                 <div key={date}>
                   <h3 className="text-sm font-medium text-slate-700">
-                    {DateTime.fromISO(date, { zone: viewerTz }).toFormat("cccc, MMM d")}
+                    {(() => {
+                      try {
+                        return DateTime.fromISO(date, { zone: viewerTz }).toFormat("cccc, MMM d");
+                      } catch {
+                        return date;
+                      }
+                    })()}
                   </h3>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {daySlots.map((s) => {
