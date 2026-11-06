@@ -1,0 +1,13 @@
+node_modules
+.next
+out
+dist
+coverage
+test-results
+playwright-report
+.git
+.gitignore
+.env
+.env.local
+*.log
+.DS_Store
