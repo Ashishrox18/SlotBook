@@ -1,3 +1,4 @@
+export const runtime = "nodejs";
 import type { NextRequest } from "next/server";
 import { sql, isUniqueViolation } from "@/lib/db";
 import { getHostBySlug } from "@/lib/availability/queries";

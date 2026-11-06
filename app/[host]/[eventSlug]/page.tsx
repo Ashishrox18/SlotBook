@@ -3,6 +3,7 @@ import { getEventTypeByHostSlug } from "@/lib/availability/queries";
 import BookingFlow from "@/components/booking/BookingFlow";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export default async function BookingPage({
   params,

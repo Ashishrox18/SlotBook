@@ -1,3 +1,4 @@
+export const runtime = "nodejs";
 import type { NextRequest } from "next/server";
 import { isDemoPassword, createSessionToken, SESSION_COOKIE } from "@/lib/security/auth";
 import { respond } from "@/lib/observability/http";

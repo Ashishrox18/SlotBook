@@ -1,3 +1,4 @@
+export const runtime = "nodejs";
 import type { NextRequest } from "next/server";
 import { createHold } from "@/lib/booking/holds";
 import { CreateHoldSchema } from "@/lib/validation/schemas";

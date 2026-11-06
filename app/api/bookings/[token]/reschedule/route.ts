@@ -1,3 +1,4 @@
+export const runtime = "nodejs";
 import type { NextRequest } from "next/server";
 import { rescheduleBooking } from "@/lib/booking/reschedule";
 import { RescheduleSchema } from "@/lib/validation/schemas";

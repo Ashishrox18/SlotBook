@@ -1,3 +1,4 @@
+export const runtime = "nodejs";
 import { NextResponse } from "next/server";
 import { sql } from "@/lib/db";
 import { metricsSnapshot } from "@/lib/observability/metrics";

@@ -3,6 +3,7 @@ import { getBookingByToken, type BookingDetail } from "@/lib/booking/queries";
 import ManageBooking from "@/components/booking/ManageBooking";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export default async function ManagePage({ params }: { params: { token: string } }) {
   const booking = await getBookingByToken(params.token);

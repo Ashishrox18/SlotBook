@@ -1,3 +1,4 @@
+export const runtime = "nodejs";
 import { type NextRequest } from "next/server";
 import { DateTime } from "luxon";
 import { dbNow } from "@/lib/db";

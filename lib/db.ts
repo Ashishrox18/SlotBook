@@ -18,17 +18,16 @@ export function getPool(): Pool {
     if (!connectionString) {
       throw new Error("DATABASE_URL is not set. See .env.example.");
     }
-    // Serverless environments (Vercel) spin up many short-lived processes.
-    // Keep max connections low to avoid exhausting the DB connection limit.
-    // Supabase Transaction Mode (port 6543) handles pooling externally.
+    // Always enable SSL for external databases (Supabase, RDS, etc.).
+    // For local Docker Postgres (localhost) SSL is not available, so skip it.
+    const isLocal = connectionString.includes("localhost") || connectionString.includes("127.0.0.1");
     _pool = new Pool({
       connectionString,
       max: 5,
       idleTimeoutMillis: 10_000,
       connectionTimeoutMillis: 5_000,
       statement_timeout: 30_000,
-      // Required for Supabase / pgbouncer in transaction mode
-      ...(connectionString.includes("supabase") ? { ssl: { rejectUnauthorized: false } } : {}),
+      ssl: isLocal ? false : { rejectUnauthorized: false },
     });
   }
   return _pool;

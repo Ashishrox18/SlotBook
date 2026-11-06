@@ -1,3 +1,4 @@
+export const runtime = "nodejs";
 import type { NextRequest } from "next/server";
 import { sql } from "@/lib/db";
 import { bookingDto } from "@/lib/booking/dto";
